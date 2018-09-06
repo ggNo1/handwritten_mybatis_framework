@@ -30,6 +30,7 @@ public class MapperRegistory {
             String t = value.substring(value.indexOf("#")+1,value.length());
             Class type = this.getClass().getClassLoader().loadClass(t);
             this.methodSqlMapping.put(key,new MapperData(sql,type));
+            System.err.println( methodSqlMapping );
             logger.info("In loading methodSqlMapping------sql: "+sql+" and type: "+type);
         }
     }

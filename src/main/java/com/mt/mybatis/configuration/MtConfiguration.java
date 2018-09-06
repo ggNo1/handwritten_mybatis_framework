@@ -31,13 +31,13 @@ public class MtConfiguration {
     private MtTypeHandlerRegistory typeHandlerRegistory = new MtTypeHandlerRegistory();
 
 
-    public MtConfiguration(String configLocation){
+    public MtConfiguration(String configLocation) {
         this.configLocation = configLocation;
         init();
     }
 
-    private void init(){
-        try {
+    private void init() {
+//        try {
             //记载配置文件，这里使用properties代替xml解析
             loadConfigProperties();
             //初始化数据源信息
@@ -45,25 +45,28 @@ public class MtConfiguration {
             //解析并加载mapper文件
             loadMapperRegistory();
             //解析加载plugin
-            initPluginChain();
+            //initPluginChain();
             //解析加载typeHandler
-            initTypeHandler();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        }
+            //initTypeHandler();
+//        }
+//        catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+//        }
     }
 
-    public void loadConfigProperties(){
-        if(this.configLocation==null){
+    //读取mybatis-config.xml配置文件
+    public void loadConfigProperties() {
+        if (configLocation == null) {
             throw new RuntimeException("Mybatis's configLocation is not null!");
         }
         try {
-            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(configLocation);
-            this.configProperties.load(inputStream);
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(configLocation);
+            //读取mybatis-config.xml配置文件
+            configProperties.load(inputStream);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -71,23 +74,27 @@ public class MtConfiguration {
         }
     }
 
-    public void loadMapperRegistory(){
-        this.scan();
-        if(mapperProperties == null){
-            throw new RuntimeException("Mybatis's mapperLocation is not null!");
+    //解析mapper文件 获取 sql 和 返回类型
+    public void loadMapperRegistory() {
+        scan();
+        if (mapperProperties == null) {
+            throw new RuntimeException("mapper 文件为空!");
         }
         try {
+            //解析mapper文件 获取 sql 和 返回类型
             mapperRegistory.doLoadMethodSqlMapping(mapperProperties);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    public void scan(){
+    //读取mapper文件
+    public void scan() {
         try {
+            //读取mapper文件
             String mapperLocation = configProperties.getProperty("mapperLocation");
-            InputStream is = this.getClass().getClassLoader().getResourceAsStream(mapperLocation);
-            this.mapperProperties.load(is);
+            InputStream is = getClass().getClassLoader().getResourceAsStream(mapperLocation);
+            mapperProperties.load(is);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -95,41 +102,46 @@ public class MtConfiguration {
         }
     }
 
-    public void initDataSource(){
-        this.dataSource = new MtDataSource(configProperties.getProperty("jdbc.url"),configProperties.getProperty("jdbc.driver"),
-                configProperties.getProperty("jdbc.userName"),configProperties.getProperty("jdbc.passWord"));
+    //读取数据库连接
+    public void initDataSource() {
+        //读取数据库连接
+        dataSource = new MtDataSource(
+                configProperties.getProperty("jdbc.url"),
+                configProperties.getProperty("jdbc.driver"),
+                configProperties.getProperty("jdbc.userName"),
+                configProperties.getProperty("jdbc.passWord"));
     }
 
     public void initPluginChain() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         String pluginStr = configProperties.getProperty("plugin");
         String[] pluginArray = pluginStr.split(",");
-        for (String plugin:pluginArray){
-            Class clazz = this.getClass().getClassLoader().loadClass(plugin);
-            if(clazz!=null){
+        for (String plugin : pluginArray) {
+            Class clazz = getClass().getClassLoader().loadClass(plugin);
+            if (clazz != null) {
                 Object o = clazz.newInstance();
-                this.interceptorChain.addInterceptor((MtInterceptor)clazz.newInstance());
+                interceptorChain.addInterceptor((MtInterceptor) clazz.newInstance());
             }
         }
     }
 
-    public MtExecutor newExecutor(ExecutorType type){
+    public MtExecutor newExecutor(ExecutorType type) {
         MtExecutor executor = null;
 
-        if(ExecutorType.SIMPLE==type){
+        if (ExecutorType.SIMPLE == type) {
             executor = new MtSimpleExecutor(this);
         }
 
-        return (MtExecutor)this.interceptorChain.pluginAll(executor);
+        return (MtExecutor) interceptorChain.pluginAll(executor);
     }
 
     public void initTypeHandler() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         String typeHandlerStr = configProperties.getProperty("typeHandler");
         String[] typeHandlerArray = typeHandlerStr.split(",");
-        for (String typeHandler:typeHandlerArray){
-            Class clazz = this.getClass().getClassLoader().loadClass(typeHandler);
-            if(clazz!=null){
+        for (String typeHandler : typeHandlerArray) {
+            Class clazz = getClass().getClassLoader().loadClass(typeHandler);
+            if (clazz != null) {
                 Object o = clazz.newInstance();
-                this.typeHandlerRegistory.regist((MtTypeHandler) clazz.newInstance());
+                typeHandlerRegistory.regist((MtTypeHandler) clazz.newInstance());
             }
         }
     }
@@ -139,7 +151,7 @@ public class MtConfiguration {
     }
 
     public void setMapperProperties(Properties mapperProperties) {
-        this.mapperProperties = mapperProperties;
+        mapperProperties = mapperProperties;
     }
 
     public Properties getConfigProperties() {
@@ -147,7 +159,7 @@ public class MtConfiguration {
     }
 
     public void setConfigProperties(Properties configProperties) {
-        this.configProperties = configProperties;
+        configProperties = configProperties;
     }
 
     public MtDataSource getDataSource() {
@@ -159,11 +171,11 @@ public class MtConfiguration {
     }
 
     public void setConfigLocation(String configLocation) {
-        this.configLocation = configLocation;
+        configLocation = configLocation;
     }
 
     public void setDataSource(MtDataSource dataSource) {
-        this.dataSource = dataSource;
+        dataSource = dataSource;
     }
 
     public MapperRegistory getMapperRegistory() {
@@ -171,6 +183,6 @@ public class MtConfiguration {
     }
 
     public void setMapperRegistory(MapperRegistory mapperRegistory) {
-        this.mapperRegistory = mapperRegistory;
+        mapperRegistory = mapperRegistory;
     }
 }

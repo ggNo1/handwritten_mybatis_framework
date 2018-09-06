@@ -1,6 +1,5 @@
 package com.mt.main.domain;
 
-import com.mt.main.common.SEX;
 
 /**
  * <p>person 实体</p>
@@ -15,13 +14,13 @@ public class Person {
     private String name;
     private Long id;
     private Integer age;
-    private SEX sex;
+    private Integer sex;
 
-    public SEX getSex() {
+    public Integer getSex() {
         return sex;
     }
 
-    public void setSex(SEX sex) {
+    public void setSex(Integer sex) {
         this.sex = sex;
     }
 

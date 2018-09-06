@@ -1,6 +1,5 @@
 package com.mt.mybatis.result;
 
-import com.mt.main.common.SEX;
 import com.mt.mybatis.typehandler.MtTypeHandler;
 import com.mt.mybatis.typehandler.MtTypeHandlerRegistory;
 import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
@@ -75,9 +74,6 @@ public class ResultHandler {
             return rs.getString(field.getName());
         }else if(Long.class == type){
             return rs.getLong(field.getName());
-        }else if(SEX.class == type){
-            MtTypeHandler typeHandler = MtTypeHandlerRegistory.TYPE_HANDLER_MAP.get(type);
-            return typeHandler.getResult(resultSet,field.getName());
         }else{
             return rs.getString(field.getName());
         }
