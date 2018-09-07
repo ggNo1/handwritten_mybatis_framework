@@ -26,14 +26,14 @@ public class StatementHandler {
 
     public <E> E query(MapperData mapperData, Object parameter){
         Connection conn = null;
-        PreparedStatement preparedStatement = null;
+        PreparedStatement ps = null;
         try {
             conn = getConnection();
-            preparedStatement = conn.prepareStatement(mapperData.getSql());
-            ParameterHandler parameterHandler = new ParameterHandler(preparedStatement);
+            ps = conn.prepareStatement(mapperData.getSql());
+            ParameterHandler parameterHandler = new ParameterHandler(ps);
             parameterHandler.setParameters(parameter);
-            preparedStatement.execute();
-            ResultHandler resultHandler = new ResultHandler(mapperData.getType(),preparedStatement.getResultSet());
+            ps.execute();
+            ResultHandler resultHandler = new ResultHandler(mapperData.getType(),ps.getResultSet());
             return (E) resultHandler.handle();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -41,8 +41,8 @@ public class StatementHandler {
             e.printStackTrace();
         }finally {
             try {
-                if(preparedStatement!=null){
-                    preparedStatement.close();
+                if(ps!=null){
+                    ps.close();
                 }
                 if(conn!=null){
                     conn.close();
