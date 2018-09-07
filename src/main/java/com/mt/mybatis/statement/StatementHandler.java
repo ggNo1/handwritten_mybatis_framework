@@ -54,6 +54,39 @@ public class StatementHandler {
         return null;
     }
 
+    public Integer delete(MapperData mapperData, Object parameter){
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = getConnection();
+            ps = conn.prepareStatement( mapperData.getSql() );
+            Object[] objects = null;
+            if ( parameter instanceof Object[]){
+                objects = (Object[]) parameter;
+            }
+            for (int i = 0; i < objects.length; i++) {
+                ps.setDouble(i+1, Double.valueOf( objects[i].toString() ));
+            }
+            int i = ps.executeUpdate();
+            System.err.println( i );
+            return i;
+        }catch (Exception e){
+            System.err.println( e.getMessage() );
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
     private Connection getConnection() throws SQLException, ClassNotFoundException {
         MtDataSource dataSource = configuation.getDataSource();
         Class.forName(dataSource.getDriver());

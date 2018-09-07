@@ -23,8 +23,9 @@ public class Entry {
         MtSqlSessionFactoryBuilder sqlSessionFactoryBuilder = new MtSqlSessionFactoryBuilder(configuration);
         MtSqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build();
         MtSqlSession sqlSession = sqlSessionFactory.openSession();
-        PersonDao personDao = sqlSession.getMapper(PersonDao.class);
-        Person person = personDao.queryPersonById(1l);
-        System.out.println(person);
+        PersonDao personDao  = sqlSession.getMapper( PersonDao.class);
+        Integer i = personDao.delete( 5);
+
+        System.out.println( i );
     }
 }

@@ -25,4 +25,11 @@ public class MtSimpleExecutor implements MtExecutor {
         StatementHandler statementHandler = new StatementHandler(configuation);
         return statementHandler.query(mapperData,parameter);
     }
+
+    @Override
+    public Integer delete(MapperData mapperData, Object parameter) throws Exception {
+        StatementHandler statementHandler = new StatementHandler(configuation);
+
+        return statementHandler.delete( mapperData, parameter);
+    }
 }

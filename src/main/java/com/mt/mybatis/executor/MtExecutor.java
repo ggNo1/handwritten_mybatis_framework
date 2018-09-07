@@ -14,4 +14,7 @@ import com.mt.mybatis.mapper.MapperData;
 public interface MtExecutor {
 
     <T> T query(MapperData mapperData, Object parameter) throws Exception;
+
+
+    Integer delete(MapperData mapperData, Object parameter) throws Exception;
 }

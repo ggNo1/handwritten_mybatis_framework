@@ -33,6 +33,10 @@ public class MtSqlSession {
         return executor.query(mapperData, parameter);
     }
 
+    public Integer delete(MapperData mapperData, Object parameter) throws Exception {
+        return executor.delete(mapperData, parameter);
+    }
+
     public MtConfiguration getConfiguration() {
         return configuration;
     }

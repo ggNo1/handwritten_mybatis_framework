@@ -14,4 +14,6 @@ import com.mt.main.domain.Person;
 public interface PersonDao {
 
     Person queryPersonById(Long id);
+
+    Integer delete(Integer id );
 }
