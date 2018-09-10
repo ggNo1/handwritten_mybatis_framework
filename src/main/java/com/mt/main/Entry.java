@@ -19,13 +19,12 @@ import com.mt.mybatis.session.MtSqlSessionFactoryBuilder;
 public class Entry {
 
     public static void main(String[] args) {
-        MtConfiguration configuration = new MtConfiguration("mybatis-config.properties");
+        MtConfiguration configuration = new MtConfiguration("mybatis-config.properties",PersonDao.class);
         MtSqlSessionFactoryBuilder sqlSessionFactoryBuilder = new MtSqlSessionFactoryBuilder(configuration);
         MtSqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build();
         MtSqlSession sqlSession = sqlSessionFactory.openSession();
-        PersonDao personDao  = sqlSession.getMapper( PersonDao.class);
-        Integer i = personDao.delete( 5);
-
-        System.out.println( i );
+        PersonDao personDao  = sqlSession.getMapper( PersonDao.class );
+        Person person = personDao.search( 18 ,"张三");
+        System.err.println( person );
     }
 }

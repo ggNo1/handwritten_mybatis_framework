@@ -7,6 +7,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <p>MapperRegistory，DAO方法与SQL的映射关系</p>
@@ -26,8 +28,15 @@ public class MapperRegistory {
         while(propertyNames.hasMoreElements()){
             String key = (String)propertyNames.nextElement();
             String value = mapperProperties.getProperty(key);
-            String sql = value.substring(0,value.indexOf("#"));
-            String t = value.substring(value.indexOf("#")+1,value.length());
+            //得到sql
+            String sql = value.substring(0,value.indexOf("$"));
+
+            String reg="(#[^}]*})";//边界值的限定
+
+            sql = sql.replaceAll(reg,"?");
+            logger.info( sql );
+
+            String t = value.substring(value.indexOf("$")+1,value.length());
             Class type = this.getClass().getClassLoader().loadClass(t);
             this.methodSqlMapping.put(key,new MapperData(sql,type));
             System.err.println( methodSqlMapping );

@@ -10,7 +10,11 @@ import com.mt.mybatis.typehandler.MtTypeHandler;
 import com.mt.mybatis.typehandler.MtTypeHandlerRegistory;
 
 import java.io.*;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
+
+import static java.io.File.separatorChar;
 
 /**
  * <p>Mybatsi配置类,读取解析配置文件信息</p>
@@ -29,10 +33,12 @@ public class MtConfiguration {
     private MapperRegistory mapperRegistory = new MapperRegistory();
     private MtInterceptorChain interceptorChain = new MtInterceptorChain();
     private MtTypeHandlerRegistory typeHandlerRegistory = new MtTypeHandlerRegistory();
+    private Class<?> mapper ;
 
 
-    public MtConfiguration(String configLocation) {
+    public MtConfiguration(String configLocation , Class<?> mapper) {
         this.configLocation = configLocation;
+        this.mapper = mapper;
         init();
     }
 
@@ -93,8 +99,34 @@ public class MtConfiguration {
         try {
             //读取mapper文件
             String mapperLocation = configProperties.getProperty("mapperLocation");
-            InputStream is = getClass().getClassLoader().getResourceAsStream(mapperLocation);
-            mapperProperties.load(is);
+
+            String filePath = new File(getClass().getResource(String.valueOf(separatorChar)).getPath()).getAbsolutePath();
+            String packagePath = mapperLocation.replace('.', separatorChar);
+            filePath = filePath + separatorChar + packagePath;
+
+            File file = new File(filePath);
+            File[] files = file.listFiles();
+
+            List<String> properties = new LinkedList<>();
+            List<String> clazzs = new LinkedList<>();
+
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isFile()) {
+                    if (files[i].toString().substring(files[i].toString().indexOf(".") + 1, files[i].toString().length()).equals("properties")) {
+                        properties.add(String.valueOf(files[i]));
+                    }else {
+                        clazzs.add(String.valueOf(files[i]));
+                    }
+                }
+            }
+
+            for (String property : properties) {
+                String clazzName = property.substring(property.lastIndexOf(separatorChar) +1, property.indexOf("."));
+                if ( clazzName.equals( mapper.getSimpleName() )){
+                    mapperProperties.load( new FileInputStream( property ));
+                }
+            }
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

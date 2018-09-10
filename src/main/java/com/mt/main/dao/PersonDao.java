@@ -16,4 +16,6 @@ public interface PersonDao {
     Person queryPersonById(Long id);
 
     Integer delete(Integer id );
+
+    Person search(Integer age ,String name);
 }

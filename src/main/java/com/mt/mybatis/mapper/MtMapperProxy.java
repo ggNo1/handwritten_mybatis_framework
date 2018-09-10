@@ -27,8 +27,7 @@ public class MtMapperProxy implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         MapperData mapperData = this.mtSqlSession.getConfiguration().getMapperRegistory().getMethodSqlMapping().get(mapperInterface.getName()+"."+method.getName());
         if(mapperData!=null){
-            return this.mtSqlSession.delete( mapperData , args);
-            //return this.mtSqlSession.selectOne(mapperData,args);
+           return mtSqlSession.selectOne(mapperData,args);
         }
         return method.invoke(proxy,args);
     }
